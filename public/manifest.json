@@ -1,0 +1,40 @@
+{
+  "name": "Semantiai",
+  "description": "Your personal assistant for every website",
+  "manifest_version": 3,
+  "version": "1.0.0",
+  "action": {
+    "default_popup": "index.html",
+    "default_title": "Semantiai extension"
+    // "default_icon": {
+      // "16": "icon.png",
+      // "32": "icon.png",
+      // "36": "icon.png",
+      // "48": "icon.png",
+      // "128": "icon.png"
+    // }
+  },
+  // "icons": {
+  //   "16": "icon.png",
+  //   "32": "icon.png",
+  //   "36": "icon.png",
+  //   "48": "icon.png",
+  //   "128": "icon.png"
+  // },
+
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": ["tabs", "storage"],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.linkedin.com/*",
+        "https://mail.google.com/mail",
+        "https://www.linkedin.com/in/*"
+      ],
+      "js": ["contentScript.js"],
+      "run_at": "document_end"
+    }
+  ]
+}
