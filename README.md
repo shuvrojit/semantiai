@@ -46,7 +46,7 @@ To launch a development server and continuously rebuild on changes:
 npm run dev
 ```
 
-This will start your app at a local development URL (usually http://localhost:5173 by default), allowing you to test the browser extension’s UI.
+This will start your app at a local development URL (usually http://localhost:3000 by default), allowing you to test the browser extension’s UI.
 
 ## Building the Extension
 
