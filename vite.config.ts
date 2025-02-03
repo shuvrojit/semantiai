@@ -1,26 +1,27 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import { fileURLToPath, URL } from 'url'
-import { resolve } from 'path'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import { fileURLToPath, URL } from "url";
+import { resolve } from "path";
+import tailwindcss from "@tailwindcss/vite";
 
 // Convert import.meta.url to a file path
-const __dirname = fileURLToPath(new URL('.', import.meta.url))
+const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
   build: {
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'index.html'),
-        background: resolve(__dirname, 'src/background/background.ts'),
-        contentScript: resolve(__dirname, 'src/contentScript/contentScript.ts')
+        main: resolve(__dirname, "index.html"),
+        background: resolve(__dirname, "src/background/background.ts"),
+        contentScript: resolve(__dirname, "src/contentScript/contentScript.ts"),
       },
       output: {
-        entryFileNames: '[name].js'
-      }
-    }
+        entryFileNames: "[name].js",
+      },
+    },
   },
   server: {
-    port: 3000
-  }
-})
+    port: 3000,
+  },
+});
