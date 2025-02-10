@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+*,
+*::after,
+*::before {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    width: 400px;
+    min-height: 200px;
+    font-family: "Roboto", sans-serif;
+    overflow-x: hidden;
+}
+
+#root {
+    width: 100%;
+    min-height: 100%;
+}
