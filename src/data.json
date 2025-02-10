@@ -1,0 +1,160 @@
+{
+  "jobs": [
+    {
+      "id": "job-001",
+      "job_title": "Senior React Developer",
+      "job_position": "Frontend Developer",
+      "company_name": "TechCorp Solutions",
+      "company_logo": "https://example.com/techcorp-logo.png",
+      "company_culture": "Fast-paced startup environment with focus on innovation",
+      "job_location": "San Francisco, CA",
+      "workplace": "hybrid",
+      "job_type": ["full-time"],
+      "salary": "$120,000 - $150,000",
+      "due_date": "2025-03-15",
+      "saved_date": "2025-01-10",
+      "posted_date": "2025-01-01",
+      "job_description": "Looking for an experienced React developer to join our team",
+      "responsibilities": [
+        "Build scalable frontend applications",
+        "Optimize performance",
+        "Lead team initiatives"
+      ],
+      "requirements": [
+        "5+ years React experience",
+        "Strong TypeScript skills",
+        "Experience with state management"
+      ],
+      "tech_stack": ["React", "TypeScript", "Next.js", "Redux", "GraphQL"],
+      "additional_skills": ["AWS", "Docker"],
+      "professional_experience": 5,
+      "job_category": "Frontend Development",
+      "job_category_id": "FE001",
+      "url": "https://example.com/jobs/senior-react-dev",
+      "status": "active"
+    },
+    {
+      "id": "job-002",
+      "job_title": "React Native Developer",
+      "job_position": "Mobile Developer",
+      "company_name": "MobileApp Inc",
+      "company_logo": "https://example.com/mobileapp-logo.png",
+      "company_culture": "Remote-first with emphasis on work-life balance",
+      "job_location": "New York, NY",
+      "workplace": "remote",
+      "job_type": ["contract", "full-time"],
+      "salary": "$100,000 - $130,000",
+      "due_date": "2025-02-28",
+      "saved_date": "2025-01-15",
+      "posted_date": "2025-01-05",
+      "job_description": "Mobile app development using React Native",
+      "responsibilities": [
+        "Develop cross-platform mobile applications",
+        "Implement UI/UX designs",
+        "Performance optimization"
+      ],
+      "requirements": [
+        "3+ years React Native experience",
+        "iOS and Android development"
+      ],
+      "tech_stack": ["React Native", "JavaScript", "TypeScript", "Redux"],
+      "additional_skills": ["Firebase", "Jest"],
+      "professional_experience": 3,
+      "job_category": "Mobile Development",
+      "job_category_id": "MD001",
+      "url": "https://example.com/jobs/react-native-dev",
+      "status": "active"
+    },
+    {
+      "id": "job-003",
+      "job_title": "Frontend Engineer",
+      "job_position": "Frontend Developer",
+      "company_name": "StartupXYZ",
+      "company_logo": "https://example.com/startup-logo.png",
+      "company_culture": "Young and dynamic startup culture",
+      "job_location": "Austin, TX",
+      "workplace": "on-site",
+      "job_type": ["full-time"],
+      "salary": "$90,000 - $120,000",
+      "due_date": "2025-04-01",
+      "saved_date": "2025-01-20",
+      "posted_date": "2025-01-10",
+      "job_description": "Join our growing frontend team",
+      "responsibilities": [
+        "Build user interfaces",
+        "Collaborate with design team",
+        "Code review"
+      ],
+      "requirements": ["2+ years React experience", "CSS expertise"],
+      "tech_stack": ["React", "JavaScript", "CSS", "Tailwind"],
+      "additional_skills": ["Figma", "Git"],
+      "professional_experience": 2,
+      "job_category": "Frontend Development",
+      "job_category_id": "FE002",
+      "url": "https://example.com/jobs/frontend-engineer",
+      "status": "active"
+    },
+    {
+      "id": "job-004",
+      "job_title": "Senior Frontend Architect",
+      "job_position": "Frontend Developer",
+      "company_name": "Enterprise Solutions Ltd",
+      "company_logo": "https://example.com/enterprise-logo.png",
+      "company_culture": "Enterprise environment with structured development",
+      "job_location": "London, UK",
+      "workplace": "hybrid",
+      "job_type": ["full-time"],
+      "salary": "£80,000 - £100,000",
+      "due_date": "2025-03-30",
+      "saved_date": "2025-01-25",
+      "posted_date": "2025-01-15",
+      "job_description": "Looking for a technical leader",
+      "responsibilities": [
+        "Architecture design",
+        "Team leadership",
+        "Technical planning"
+      ],
+      "requirements": [
+        "7+ years frontend experience",
+        "Architecture experience",
+        "Team leadership"
+      ],
+      "tech_stack": ["React", "TypeScript", "Next.js", "Node.js"],
+      "additional_skills": ["AWS", "Azure", "System Design"],
+      "professional_experience": 7,
+      "job_category": "Frontend Development",
+      "job_category_id": "FE003",
+      "url": "https://example.com/jobs/frontend-architect",
+      "status": "active"
+    },
+    {
+      "id": "job-005",
+      "job_title": "React Developer",
+      "job_position": "Frontend Developer",
+      "company_name": "Digital Agency Co",
+      "company_logo": "https://example.com/agency-logo.png",
+      "company_culture": "Creative and collaborative environment",
+      "job_location": "Berlin, Germany",
+      "workplace": "remote",
+      "job_type": ["part-time", "contract"],
+      "salary": "€45,000 - €60,000",
+      "due_date": "2025-02-15",
+      "saved_date": "2025-01-30",
+      "posted_date": "2025-01-20",
+      "job_description": "Part-time React developer needed",
+      "responsibilities": [
+        "Frontend development",
+        "Component building",
+        "Maintenance"
+      ],
+      "requirements": ["2+ years React experience", "Flexible schedule"],
+      "tech_stack": ["React", "JavaScript", "SASS", "Material-UI"],
+      "additional_skills": ["Wordpress", "PHP"],
+      "professional_experience": 2,
+      "job_category": "Frontend Development",
+      "job_category_id": "FE004",
+      "url": "https://example.com/jobs/react-developer",
+      "status": "active"
+    }
+  ]
+}
