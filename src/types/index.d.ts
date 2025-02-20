@@ -10,6 +10,11 @@ export interface ContentState {
   content: TabContent | null;
 }
 
+export interface LinksResponse {
+  links: TabContent[];
+  total: number;
+}
+
 export interface Job {
   // Basic Info
   id: string;

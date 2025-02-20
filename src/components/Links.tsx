@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { getLinks } from '@/api/content';
+import { TabContent } from '@/types';
 
 interface LinkCardProps {
   title: string;
@@ -22,26 +24,54 @@ const LinkCard: React.FC<LinkCardProps> = ({ title, url }) => {
 };
 
 const Links: React.FC = () => {
-  // Example links - these would typically come from a data source
-  const links = [
-    {
-      title: "Documentation",
-      url: "https://docs.example.com"
-    },
-    {
-      title: "GitHub Repository",
-      url: "https://github.com/example/repo"
-    }
-  ];
+  const [links, setLinks] = useState<TabContent[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchLinks = async () => {
+      try {
+        const response = await getLinks();
+        setLinks(response.data);
+        setError(null);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch links');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLinks();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="max-w-4xl mx-auto text-center py-12">
+        <div className="text-gray-600">Loading links...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-4xl mx-auto text-center py-12">
+        <div className="text-red-600">{error}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold mb-8">Links</h1>
-      <div className="space-y-4">
-        {links.map((link, index) => (
-          <LinkCard key={index} {...link} />
-        ))}
-      </div>
+      {links.length === 0 ? (
+        <div className="text-gray-600 text-center py-8">No links found</div>
+      ) : (
+        <div className="space-y-4">
+          {links.map((link, index) => (
+            <LinkCard key={`${link.url}-${index}`} title={link.title} url={link.url} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
