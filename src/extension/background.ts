@@ -7,6 +7,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             target: { tabId: tabs[0].id },
             func: () => ({
               text: document.body.innerText,
+              html:document.body.innerHTML,
               // text: document.body.textContent,
               title: document.title,
               url: window.location.href,

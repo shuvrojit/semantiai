@@ -2,13 +2,21 @@ import { createRoot } from "react-dom/client";
 import { useTabContent } from "@/hooks/useTabContent";
 import { ContentDisplay } from "@/components/content";
 import Button from "@/components/buttons/NavButton";
+import { useState } from "react";
+import { saveTab } from "@/api/content";
 
 const Popup = () => {
+  const [summaryContent, setSummaryContent] = useState<string>("");
   const { content, isLoading, error, readContent } = useTabContent();
 
-  const handleSaveTab = () => {
+  const handleSaveTab = async () => {
     // TODO: Implement save functionality
+
     console.log("Save tab clicked");
+    readContent();
+    if (content) {
+    await saveTab(content);
+    }
   };
 
   return (
@@ -36,9 +44,12 @@ const Popup = () => {
         />
       </div>
       {error && <div className="mt-4 p-4 bg-red-100 text-red-700">{error}</div>}
+      {summaryContent && <ContentDisplay content={summaryContent} />}
       {content && <ContentDisplay content={content} />}
     </div>
   );
 };
 
 createRoot(document.getElementById("root")!).render(<Popup />);
+
+
