@@ -1,138 +1,116 @@
-import React, { useState } from 'react';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Calendar, GraduationCap, Banknote } from 'lucide-react';
+import React from 'react';
 
-type ScholarshipDetails = {
-  program_info: {
-    name: string;
-    provider: string;
-    type: string;
-  };
-  benefits: {
-    financial: string;
-    academic: string;
-    other: string;
-  };
-  requirements: {
-    eligibility?: string[];
-    application?: string[];
-    selection_criteria?: string[];
-    fields?: string[];
-    eligibility_criteria?: string;
-  };
-  deadlines: {
-    application_deadline?: string;
-  } | string;
-};
+interface IScholarship {
+  title: string;
+  organization: string;
+  amount: string;
+  deadline: Date;
+  eligibility: string[];
+  requirements: string[];
+  field_of_study: string[];
+  degree_level: string[];
+  country: string;
+  link: string;
+  status: 'active' | 'expired' | 'upcoming';
+  additional_info?: Map<string, any>;
+}
 
-type ScholarshipCardProps = {
-  details: ScholarshipDetails;
-  tags: string[];
-};
+interface ScholarshipCardProps {
+  scholarship: IScholarship;
+}
 
-const ScholarshipCard = ({ details, tags }: ScholarshipCardProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+const ScholarshipCard: React.FC<ScholarshipCardProps> = ({ scholarship }) => {
+  const {
+    title,
+    organization,
+    amount,
+    deadline,
+    status,
+    country,
+    field_of_study,
+    degree_level,
+  } = scholarship;
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'active':
+        return 'bg-green-100 text-green-800';
+      case 'expired':
+        return 'bg-red-100 text-red-800';
+      case 'upcoming':
+        return 'bg-blue-100 text-blue-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
 
   return (
-    <>
-      <Card className="w-full max-w-md hover:shadow-lg transition-shadow duration-200">
-        <CardHeader>
-          <div className="flex gap-2 flex-wrap mb-2">
-            {tags.map((tag) => (
-              <Badge key={tag} variant="secondary" className="bg-blue-100 text-blue-800">
-                {tag}
-              </Badge>
-            ))}
-          </div>
-          <CardTitle className="text-xl font-bold">{details.program_info.name}</CardTitle>
-          <CardDescription>{details.program_info.provider}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <Banknote className="w-5 h-5 text-green-600" />
-              <span>{details.benefits.financial}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <GraduationCap className="w-5 h-5 text-blue-600" />
-              <span>{details.program_info.type}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-red-600" />
-              <span>Deadline: {typeof details.deadlines === 'string' ?
-                details.deadlines :
-                details.deadlines.application_deadline}</span>
-            </div>
-          </div>
-        </CardContent>
-        <CardFooter>
-          <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogTrigger asChild>
-              <Button className="w-full">View Details</Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>{details.program_info.name}</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-6 py-4">
-                <div>
-                  <h3 className="text-lg font-semibold mb-2">Benefits</h3>
-                  <ul className="space-y-2">
-                    <li><strong>Financial:</strong> {details.benefits.financial}</li>
-                    <li><strong>Academic:</strong> {details.benefits.academic}</li>
-                    <li><strong>Other:</strong> {details.benefits.other}</li>
-                  </ul>
-                </div>
+    <div className="bg-white rounded-lg shadow-md p-6 mb-4 hover:shadow-lg transition-shadow">
+      <div className="flex justify-between items-start mb-4">
+        <div>
+          <h3 className="text-xl font-semibold text-gray-900">{title}</h3>
+          <p className="text-gray-600">{organization}</p>
+        </div>
+        <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(status)}`}>
+          {status.charAt(0).toUpperCase() + status.slice(1)}
+        </span>
+      </div>
+      
+      <div className="grid grid-cols-2 gap-4 mb-4">
+        <div>
+          <p className="text-sm text-gray-500">Amount</p>
+          <p className="font-medium text-gray-900">{amount}</p>
+        </div>
+        <div>
+          <p className="text-sm text-gray-500">Deadline</p>
+          <p className="font-medium text-gray-900">
+            {new Date(deadline).toLocaleDateString()}
+          </p>
+        </div>
+        <div>
+          <p className="text-sm text-gray-500">Country</p>
+          <p className="font-medium text-gray-900">{country}</p>
+        </div>
+      </div>
 
-                <div>
-                  <h3 className="text-lg font-semibold mb-2">Requirements</h3>
-                  {details.requirements.eligibility && (
-                    <div className="mb-4">
-                      <h4 className="font-medium mb-1">Eligibility:</h4>
-                      <ul className="list-disc pl-5 space-y-1">
-                        {details.requirements.eligibility.map((item, index) => (
-                          <li key={index}>{item}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+      <div className="mb-4">
+        <p className="text-sm text-gray-500 mb-1">Fields of Study</p>
+        <div className="flex flex-wrap gap-2">
+          {field_of_study.map((field, index) => (
+            <span
+              key={index}
+              className="bg-gray-100 text-gray-700 text-sm px-2 py-1 rounded"
+            >
+              {field}
+            </span>
+          ))}
+        </div>
+      </div>
 
-                  {details.requirements.application && (
-                    <div className="mb-4">
-                      <h4 className="font-medium mb-1">Application Process:</h4>
-                      <ul className="list-disc pl-5 space-y-1">
-                        {details.requirements.application.map((item, index) => (
-                          <li key={index}>{item}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+      <div className="mb-4">
+        <p className="text-sm text-gray-500 mb-1">Degree Levels</p>
+        <div className="flex flex-wrap gap-2">
+          {degree_level.map((level, index) => (
+            <span
+              key={index}
+              className="bg-gray-100 text-gray-700 text-sm px-2 py-1 rounded"
+            >
+              {level}
+            </span>
+          ))}
+        </div>
+      </div>
 
-                  {details.requirements.selection_criteria && (
-                    <div>
-                      <h4 className="font-medium mb-1">Selection Criteria:</h4>
-                      <ul className="list-disc pl-5 space-y-1">
-                        {details.requirements.selection_criteria.map((item, index) => (
-                          <li key={index}>{item}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-
-                <div>
-                  <h3 className="text-lg font-semibold mb-2">Provider Information</h3>
-                  <p><strong>Institution:</strong> {details.program_info.provider}</p>
-                  <p><strong>Program Type:</strong> {details.program_info.type}</p>
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
-        </CardFooter>
-      </Card>
-    </>
+      <a
+        href={scholarship.link}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+      >
+        Apply Now
+      </a>
+    </div>
   );
 };
+
+export default ScholarshipCard;

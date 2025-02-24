@@ -1,8 +1,15 @@
 export interface TabContent {
   _id: string;
   text: string;
+  html: string;
   title: string;
   url: string;
+  baseurl?: string;
+  media?: string[];
+  metadata?: Record<string, any>;
+  createdAt?: string;
+  updatedAt?: string;
+  __v?: number;
 }
 
 export interface ContentState {

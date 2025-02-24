@@ -7,8 +7,8 @@ const Navbar: React.FC = () => {
   const location = useLocation();
 
   const navItems = [
-    { name: "Jobs", path: "/saved-jobs" },
-    { name: "Schoarship/Admission", path: "/resume" },
+    { name: "Jobs", path: "/jobs" },
+    { name: "Scholarship", path: "/scholarships" },
     { name: "Article", path: "/cv-template" },
     { name: "Links", path: "/links" },
   ];
