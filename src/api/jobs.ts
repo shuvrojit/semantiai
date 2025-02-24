@@ -17,20 +17,13 @@ export interface IScholarship {
   additional_info?: Map<string, any>;
 }
 
-export async function fetchJobs(filters?: {
-  status?: Job['status'];
-  workplace?: Job['workplace'];
-  job_type?: Job['job_type'];
-}): Promise<Job[]> {
+export async function fetchJobs(): Promise<Job[]> {
   const queryParams = new URLSearchParams();
   
-  if (filters?.status) queryParams.append('status', filters.status);
-  if (filters?.workplace) queryParams.append('workplace', filters.workplace);
-  if (filters?.job_type) queryParams.append('job_type', filters.job_type);
-
-  const endpoint = `/jobs${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+  const endpoint = `/jobs`
   const response = await makeRequest<ApiResponse<Job[]>>(endpoint, { method: 'GET' });
-  return response.data || [];
+  console.log(response);
+  return response.jobDescriptions || [];
 }
 
 export async function fetchJobById(jobId: string): Promise<Job> {
