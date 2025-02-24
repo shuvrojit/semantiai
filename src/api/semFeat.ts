@@ -1,5 +1,4 @@
 import { makeRequest } from './request';
-import { ApiResponse } from './config';
 
 interface SummaryRequest {
     text: string;
@@ -27,30 +26,24 @@ interface OverviewResponse {
     };
 }
 
-export async function getSummary(data: SummaryRequest): Promise<ApiResponse<SummaryResponse>> {
-    console.log("heloo");
+export async function getSummary(data: SummaryRequest): Promise<SummaryResponse> {
     return makeRequest<SummaryResponse>('/summary', {
         method: 'POST',
         body: data,
     });
 }
 
-export async function getDetailedOverview(data: OverviewRequest): Promise<ApiResponse<OverviewResponse>> {
+export async function getDetailedOverview(data: OverviewRequest): Promise<OverviewResponse> {
     return makeRequest<OverviewResponse>('/detailed-overview', {
         method: 'POST',
         body: data,
     });
 }
 
-
-
-
-export async function getTexts(data: OverviewRequest): Promise<ApiResponse<OverviewResponse>> {
+export async function getTexts(data: OverviewRequest): Promise<OverviewResponse> {
     return makeRequest<OverviewResponse>('/features/extract', {
         method: 'POST',
         body: data,
     });
 }
-
-// Semantic Features
 

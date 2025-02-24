@@ -1,4 +1,4 @@
-import { API_CONFIG, ApiResponse } from './config';
+import { API_CONFIG } from './config';
 
 type RequestOptions = {
     method: 'GET' | 'POST' | 'PUT' | 'DELETE';
@@ -6,7 +6,7 @@ type RequestOptions = {
     headers?: Record<string, string>;
 };
 
-export async function makeRequest<T>(endpoint: string, options: RequestOptions): Promise<ApiResponse<T>> {
+export async function makeRequest<T>(endpoint: string, options: RequestOptions): Promise<T> {
     try {
         const url = `${API_CONFIG.BASE_URL}${endpoint}`;
         const headers = {
@@ -26,14 +26,8 @@ export async function makeRequest<T>(endpoint: string, options: RequestOptions):
             throw new Error(data.error || 'An error occurred');
         }
 
-        return {
-            success: true,
-            data,
-        };
+        return data;
     } catch (error) {
-        return {
-            success: false,
-            error: error instanceof Error ? error.message : 'Unknown error occurred',
-        };
+        throw error instanceof Error ? error : new Error('Unknown error occurred');
     }
 }

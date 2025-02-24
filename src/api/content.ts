@@ -1,21 +1,22 @@
 import { makeRequest } from './request';
-import { ApiResponse } from './config';
 import { TabContent, LinksResponse } from '../types';
 
-
-export async function saveTab(data: TabContent ): Promise<ApiResponse> {
+export async function saveTab(data: TabContent): Promise<void> {
   return makeRequest('/page-content/', {
-        method: 'POST',
-        body: data,
-    });
+    method: 'POST',
+    body: data,
+  });
 }
 
 export async function getLinks(): Promise<LinksResponse> {
-  const response = await makeRequest<LinksResponse>('/page-content/', {
+  return makeRequest<LinksResponse>('/page-content/', {
     method: 'GET'
   });
-  if (!response.success || !response.data) {
-    throw new Error(response.error || 'Failed to fetch links');
-  }
-  return response.data;
+}
+
+export async function analyzeContent(id: string): Promise<any> {
+  return makeRequest('/features/analyze-by-id', {
+    method: 'POST',
+    body: { id }
+  });
 }

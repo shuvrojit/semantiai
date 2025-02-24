@@ -1,4 +1,4 @@
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
   if (request.type === "GET_TAB_CONTENT") {
     chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
       if (tabs[0]?.id) {
@@ -7,15 +7,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             target: { tabId: tabs[0].id },
             func: () => ({
               text: document.body.innerText,
-              html:document.body.innerHTML,
-              // text: document.body.textContent,
+              html: document.body.innerHTML,
               title: document.title,
               url: window.location.href,
             }),
           });
-          sendResponse({ success: true, data: result.result });
+          sendResponse(result.result);
         } catch (error) {
-          sendResponse({ success: false, error: String(error) });
+          sendResponse(null);
         }
       }
     });

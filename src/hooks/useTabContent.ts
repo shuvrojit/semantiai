@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { TabContent, ContentState } from "../types";
+import { ContentState } from "../types";
 
 export const useTabContent = () => {
   const [state, setState] = useState<ContentState>({
@@ -12,25 +12,23 @@ export const useTabContent = () => {
     setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
     try {
-      // Send message to background script
       const response = await chrome.runtime.sendMessage({
         type: "GET_TAB_CONTENT",
       });
 
-      if (!response.success) {
-        throw new Error(response.error);
+      if (!response) {
+        throw new Error('Failed to get tab content');
       }
 
       setState({
         isLoading: false,
         error: null,
-        content: response.data,
+        content: response,
       });
     } catch (error) {
       setState({
         isLoading: false,
-        error:
-          error instanceof Error ? error.message : "Unknown error occurred",
+        error: error instanceof Error ? error.message : "Unknown error occurred",
         content: null,
       });
     }

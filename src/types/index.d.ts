@@ -1,4 +1,5 @@
 export interface TabContent {
+  _id: string;
   text: string;
   title: string;
   url: string;

@@ -8,14 +8,15 @@ import { saveTab } from "@/api/content";
 const Popup = () => {
   const [summaryContent, setSummaryContent] = useState<string>("");
   const { content, isLoading, error, readContent } = useTabContent();
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const handleSaveTab = async () => {
-    // TODO: Implement save functionality
-
-    console.log("Save tab clicked");
-    readContent();
-    if (content) {
-    await saveTab(content);
+    try {
+      if (content) {
+        await saveTab(content);
+      }
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : 'Failed to save tab');
     }
   };
 
@@ -44,6 +45,7 @@ const Popup = () => {
         />
       </div>
       {error && <div className="mt-4 p-4 bg-red-100 text-red-700">{error}</div>}
+      {saveError && <div className="mt-4 p-4 bg-red-100 text-red-700">{saveError}</div>}
       {summaryContent && <ContentDisplay content={summaryContent} />}
       {content && <ContentDisplay content={content} />}
     </div>
