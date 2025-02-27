@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Job } from '../../types/jobs';
 
 interface JobDescriptionModalProps {
@@ -8,11 +8,32 @@ interface JobDescriptionModalProps {
 }
 
 const JobDescriptionModal: React.FC<JobDescriptionModalProps> = ({ isOpen, onClose, job }) => {
+  const modalRef = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        onClose();
+      }
+    };
+    
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen, onClose]);
+  
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto m-4">
+      <div 
+        ref={modalRef}
+        className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto m-4"
+      >
         <div className="sticky top-0 bg-white p-6 border-b">
           <div className="flex justify-between items-start">
             <div>

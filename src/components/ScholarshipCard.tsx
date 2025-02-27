@@ -17,9 +17,14 @@ interface IScholarship {
 
 interface ScholarshipCardProps {
   scholarship: IScholarship;
+  onView?: () => void;
+  onEdit?: () => void;
 }
 
-const ScholarshipCard: React.FC<ScholarshipCardProps> = ({ scholarship }) => {
+const ScholarshipCard: React.FC<ScholarshipCardProps> = ({
+  scholarship,
+  onView,
+}) => {
   const {
     title,
     organization,
@@ -29,6 +34,7 @@ const ScholarshipCard: React.FC<ScholarshipCardProps> = ({ scholarship }) => {
     country,
     field_of_study,
     degree_level,
+    link
   } = scholarship;
 
   const getStatusColor = (status: string) => {
@@ -44,8 +50,19 @@ const ScholarshipCard: React.FC<ScholarshipCardProps> = ({ scholarship }) => {
     }
   };
 
+  const formatDate = (date: Date) => {
+    return new Date(date).toLocaleDateString();
+  };
+
+  const handleApplyClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent the card click event from triggering
+  };
+
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 mb-4 hover:shadow-lg transition-shadow">
+    <div 
+      className="bg-white rounded-lg shadow-md p-6 mb-4 hover:shadow-lg transition-shadow cursor-pointer"
+      onClick={onView}
+    >
       <div className="flex justify-between items-start mb-4">
         <div>
           <h3 className="text-xl font-semibold text-gray-900">{title}</h3>
@@ -64,7 +81,7 @@ const ScholarshipCard: React.FC<ScholarshipCardProps> = ({ scholarship }) => {
         <div>
           <p className="text-sm text-gray-500">Deadline</p>
           <p className="font-medium text-gray-900">
-            {new Date(deadline).toLocaleDateString()}
+            {formatDate(deadline)}
           </p>
         </div>
         <div>
@@ -102,10 +119,11 @@ const ScholarshipCard: React.FC<ScholarshipCardProps> = ({ scholarship }) => {
       </div>
 
       <a
-        href={scholarship.link}
+        href={link}
         target="_blank"
         rel="noopener noreferrer"
         className="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+        onClick={handleApplyClick}
       >
         Apply Now
       </a>
