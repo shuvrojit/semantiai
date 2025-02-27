@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { getLinks, analyzeContent } from '@/api/content';
+import { getLinks, analyzeContent, summarizeContent } from '@/api/content';
 import { TabContent } from '@/types';
 import AnalysisModal from './modals/AnalysisModal';
+import SummaryModal from './modals/SummaryModal';
 
 interface IframeModalProps {
   content: string;
@@ -38,9 +39,12 @@ interface LinkCardProps {
 
 const LinkCard: React.FC<LinkCardProps> = ({ id, title, url, html }) => {
   const [showAnalysisModal, setShowAnalysisModal] = useState(false);
+  const [showSummaryModal, setShowSummaryModal] = useState(false);
   const [showIframeModal, setShowIframeModal] = useState(false);
   const [analysis, setAnalysis] = useState<any>(null);
+  const [summary, setSummary] = useState<string>('');
   const [analyzing, setAnalyzing] = useState(false);
+  const [summarizing, setSummarizing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleAnalyze = async () => {
@@ -54,6 +58,20 @@ const LinkCard: React.FC<LinkCardProps> = ({ id, title, url, html }) => {
       setError(err instanceof Error ? err.message : 'Failed to analyze content');
     } finally {
       setAnalyzing(false);
+    }
+  };
+
+  const handleSummary = async () => {
+    try {
+      setSummarizing(true);
+      setError(null);
+      const result = await summarizeContent(id);
+      setSummary(result.summary || result);
+      setShowSummaryModal(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to summarize content');
+    } finally {
+      setSummarizing(false);
     }
   };
 
@@ -80,6 +98,15 @@ const LinkCard: React.FC<LinkCardProps> = ({ id, title, url, html }) => {
             {analyzing ? 'Analyzing...' : 'Analyze'}
           </button>
           <button
+            onClick={handleSummary}
+            disabled={summarizing}
+            className={`px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors ${
+              summarizing ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+          >
+            {summarizing ? 'Summarizing...' : 'Summary'}
+          </button>
+          <button
             onClick={() => setShowIframeModal(true)}
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
           >
@@ -92,6 +119,12 @@ const LinkCard: React.FC<LinkCardProps> = ({ id, title, url, html }) => {
         <AnalysisModal
           analysis={analysis}
           onClose={() => setShowAnalysisModal(false)}
+        />
+      )}
+      {showSummaryModal && summary && (
+        <SummaryModal
+          summary={summary}
+          onClose={() => setShowSummaryModal(false)}
         />
       )}
       {showIframeModal && (

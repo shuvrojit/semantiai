@@ -20,3 +20,10 @@ export async function analyzeContent(id: string): Promise<any> {
     body: { id }
   });
 }
+
+export async function summarizeContent(id: string): Promise<any> {
+  return makeRequest('/features/summarize-by-id', {
+    method: 'POST',
+    body: { id }
+  });
+}
