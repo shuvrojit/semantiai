@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Button from './Button';
 
 interface TabManagerProps {
   tabs: Array<{
@@ -24,52 +25,65 @@ const TabManager: React.FC<TabManagerProps> = ({ tabs, onTabAction, onBulkAction
 
   return (
     <div className="w-[400px] max-h-[600px] bg-white overflow-y-auto rounded-lg shadow">
-      {/* First Row Action Buttons */}
-      <div className="p-4 flex justify-between items-center gap-2">
-        <button
-          onClick={() => onBulkAction?.('closeAll')}
-          className="flex-1 bg-[#ff9999] text-black px-4 py-2 rounded-lg hover:bg-[#ff8080] transition-colors"
-        >
-          Close All Tabs
-        </button>
-        <button
-          onClick={() => onBulkAction?.('bookmark')}
-          className="w-12 h-10 bg-[#ff9999] text-black rounded-lg hover:bg-[#ff8080] transition-colors flex items-center justify-center"
-        >
-          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"/>
-          </svg>
-        </button>
-        <button
-          onClick={() => onBulkAction?.('saveTab')}
-          className="flex-1 bg-[#ff9999] text-black px-4 py-2 rounded-lg hover:bg-[#ff8080] transition-colors"
-        >
-          Save Tab
-        </button>
-      </div>
-
-      {/* Second Row Action Buttons */}
-      <div className="px-4 pb-4 flex justify-between items-center gap-2">
-        <button
-          onClick={() => onBulkAction?.('restoreSession')}
-          className="flex-1 bg-[#ff9999] text-black px-4 py-2 rounded-lg hover:bg-[#ff8080] transition-colors"
-        >
-          Restore Session
-        </button>
-        <button
-          onClick={() => onBulkAction?.('star')}
-          className="w-12 h-10 bg-[#ff9999] text-black rounded-lg hover:bg-[#ff8080] transition-colors flex items-center justify-center"
-        >
-          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-          </svg>
-        </button>
-        <button
-          onClick={() => onBulkAction?.('saveSession')}
-          className="flex-1 bg-[#ff9999] text-black px-4 py-2 rounded-lg hover:bg-[#ff8080] transition-colors"
-        >
-          Save Session
-        </button>
+      {/* Action Buttons - Reorganized into 3 columns */}
+      <div className="p-4 flex justify-between">
+        {/* Column 1: Close All & Restore Session */}
+        <div className="flex flex-col gap-5">
+          <Button 
+            onClick={() => onBulkAction?.('closeAll')}
+            className="w-full"
+            size="sm"
+          >
+            Close All Tabs
+          </Button>
+          <Button
+            onClick={() => onBulkAction?.('restoreSession')}
+            className="w-full"
+            size="sm"
+          >
+            Restore Session
+          </Button>
+        </div>
+        
+        {/* Column 2: Bookmark & Favorite */}
+        <div className="flex flex-col gap-5 items-center">
+          <Button
+            onClick={() => onBulkAction?.('bookmark')}
+            iconOnly
+            size="sm"
+          >
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"/>
+            </svg>
+          </Button>
+          <Button
+            onClick={() => onBulkAction?.('star')}
+            iconOnly
+            size="sm"
+          >
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+          </Button>
+        </div>
+        
+        {/* Column 3: Save Tab & Save Session */}
+        <div className="flex flex-col gap-5">
+          <Button
+            onClick={() => onBulkAction?.('saveTab')}
+            className="w-full"
+            size="sm"
+          >
+            Save Tab
+          </Button>
+          <Button
+            onClick={() => onBulkAction?.('saveSession')}
+            className="w-full"
+            size="sm"
+          >
+            Save Session
+          </Button>
+        </div>
       </div>
 
       {/* Tabs Section Header */}
@@ -125,52 +139,63 @@ const TabManager: React.FC<TabManagerProps> = ({ tabs, onTabAction, onBulkAction
                 </div>
                 <div className="flex items-center gap-2">
                   <span className={`w-2 h-2 rounded-full ${tab.active ? 'bg-black' : 'bg-gray-300'}`}/>
-                  <button
+                  <Button
                     onClick={() => onTabAction('pin', tab.id)}
-                    className={`p-1 rounded hover:bg-gray-200 ${tab.pinned ? 'text-blue-600' : ''}`}
+                    variant="secondary"
+                    size="sm"
+                    iconOnly
+                    className={tab.pinned ? 'text-blue-600' : ''}
+                    title="Pin tab"
                   >
                     <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
                       <path d="M5 5a2 2 0 012-2h6a2 2 0 012 2v2a2 2 0 01-2 2H7a2 2 0 01-2-2V5z"/>
                       <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
                     </svg>
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={() => onTabAction('close', tab.id)}
-                    className="p-1 rounded hover:bg-red-100 text-gray-600 hover:text-red-600"
+                    variant="danger"
+                    size="sm"
+                    iconOnly
+                    title="Close tab"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
-                  </button>
+                  </Button>
                 </div>
               </div>
               
               {/* Tab Actions */}
               <div className="grid grid-cols-4 gap-2 mt-3">
-                <button
+                <Button
                   onClick={() => onTabAction('summary', tab.id)}
-                  className="bg-purple-100 text-purple-700 px-3 py-1 rounded text-sm hover:bg-purple-200"
+                  variant="purple"
+                  size="sm"
                 >
                   Summary
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={() => onTabAction('overview', tab.id)}
-                  className="bg-purple-100 text-purple-700 px-3 py-1 rounded text-sm hover:bg-purple-200"
+                  variant="purple"
+                  size="sm"
                 >
                   Detailed Overview
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={() => onTabAction('info', tab.id)}
-                  className="bg-purple-100 text-purple-700 px-3 py-1 rounded text-sm hover:bg-purple-200"
+                  variant="purple"
+                  size="sm"
                 >
                   Page Info
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={() => onTabAction('save', tab.id)}
-                  className="bg-purple-100 text-purple-700 px-3 py-1 rounded text-sm hover:bg-purple-200"
+                  variant="purple"
+                  size="sm"
                 >
                   save
-                </button>
+                </Button>
               </div>
             </div>
           ))}
