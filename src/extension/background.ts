@@ -89,12 +89,12 @@ const restoreSession = async (timestamp?: string) => {
 
   // Get the most recent session if no timestamp provided
   const session = timestamp 
-    ? sessions.find(s => s.timestamp === timestamp)
+    ? sessions.find((s: SessionSnapshot) => s.timestamp === timestamp)
     : sessions[sessions.length - 1];
 
   if (session) {
     await chrome.windows.create({ 
-      url: session.tabs.map(tab => tab.url),
+      url: session.tabs.map((tab: TabSnapshot) => tab.url),
       focused: true
     });
   }
@@ -166,7 +166,7 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
       const folders = result.tabFolders || {};
       const tabs = folders[folderName];
       if (tabs) {
-        chrome.windows.create({ url: tabs.map(tab => tab.url) });
+        chrome.windows.create({ url: tabs.map((tab: TabSnapshot) => tab.url) });
       }
       sendResponse({ success: true });
     });
