@@ -11,7 +11,7 @@ const Jobs: React.FC = () => {
   useEffect(() => {
     const loadJobs = async () => {
       try {
-        const data = await fetchJobs();
+        const data = await fetchJobs({ status: 'active' });
         setJobs(data);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch jobs');

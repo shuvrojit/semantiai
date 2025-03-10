@@ -1,17 +1,16 @@
 {
-  "name": "Semantiai",
-  "description": "Your personal assistant for every website",
+  "name": "SemanticAI Tab Manager",
+  "description": "Manage browser tabs intelligently",
   "manifest_version": 3,
   "version": "1.0.0",
   "action": {
-    "default_popup": "popup.html",
-    "default_title": "Semantiai extension"
+    "default_popup": "index.html",
+    "default_title": "Tab Manager"
   },
   "background": {
-    "service_worker": "background.js",
-    "type": "module"
+    "service_worker": "background.js"
   },
-  "permissions": ["activeTab", "scripting", "tabs"],
+  "permissions": ["tabs", "storage", "activeTab"],
   "host_permissions": ["<all_urls>"],
   "content_scripts": [
     {
