@@ -11,7 +11,7 @@
     "service_worker": "background.js",
     "type": "module"
   },
-  "permissions": ["activeTab", "scripting", "tabs"],
+  "permissions": ["activeTab", "scripting", "tabs", "bookmarks"],
   "host_permissions": ["<all_urls>"],
   "content_scripts": [
     {

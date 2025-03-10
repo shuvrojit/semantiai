@@ -1,19 +1,95 @@
+// Types
+interface TabSnapshot {
+  id?: number;
+  title: string;
+  url: string;
+  favIconUrl?: string;
+  pinned: boolean;
+}
+
+interface ChromeTab extends chrome.tabs.Tab {
+  id: number; // Force id to be required and non-null for our use cases
+}
+
+interface SessionSnapshot {
+  timestamp: string;
+  tabs: TabSnapshot[];
+}
+
 // Tab history management
 const saveTabsToHistory = async () => {
   const tabs = await chrome.tabs.query({});
   const timestamp = new Date().toISOString();
-  const history = JSON.parse(localStorage.getItem('tabHistory') || '[]');
+  const history = JSON.parse(localStorage.getItem('tabHistory') || '[]') as SessionSnapshot[];
+  
+  const tabSnapshots: TabSnapshot[] = tabs.map((tab: chrome.tabs.Tab) => ({
+    id: tab.id,
+    title: tab.title || '',
+    url: tab.url || '',
+    favIconUrl: tab.favIconUrl,
+    pinned: tab.pinned || false
+  }));
+
   history.push({
     timestamp,
-    tabs: tabs.map(tab => ({
-      id: tab.id,
-      title: tab.title,
-      url: tab.url,
-      favIconUrl: tab.favIconUrl,
-      pinned: tab.pinned
-    }))
+    tabs: tabSnapshots
   });
+
   localStorage.setItem('tabHistory', JSON.stringify(history.slice(-100))); // Keep last 100 snapshots
+};
+
+// Bookmark management
+const bookmarkAllTabs = async () => {
+  const tabs = await chrome.tabs.query({});
+  const bookmarkFolder = await chrome.bookmarks.create({
+    title: `Session - ${new Date().toLocaleString()}`
+  });
+  
+  await Promise.all(tabs.map((tab: chrome.tabs.Tab) => {
+    return chrome.bookmarks.create({
+      parentId: bookmarkFolder.id,
+      title: tab.title || '',
+      url: tab.url
+    });
+  }));
+};
+
+// Session management
+const saveSession = async () => {
+  const tabs = await chrome.tabs.query({});
+  const sessions = JSON.parse(localStorage.getItem('savedSessions') || '[]') as SessionSnapshot[];
+  
+  const tabSnapshots: TabSnapshot[] = tabs.map((tab: chrome.tabs.Tab) => ({
+    id: tab.id,
+    title: tab.title || '',
+    url: tab.url || '',
+    favIconUrl: tab.favIconUrl,
+    pinned: tab.pinned || false
+  }));
+
+  sessions.push({
+    timestamp: new Date().toISOString(),
+    tabs: tabSnapshots
+  });
+
+  localStorage.setItem('savedSessions', JSON.stringify(sessions));
+};
+
+const restoreSession = async (timestamp?: string) => {
+  const sessions = JSON.parse(localStorage.getItem('savedSessions') || '[]') as SessionSnapshot[];
+  if (sessions.length === 0) return;
+
+  // Get the most recent session if no timestamp provided
+  const session = timestamp 
+    ? sessions.find(s => s.timestamp === timestamp)
+    : sessions[sessions.length - 1];
+
+  if (session) {
+    await chrome.windows.create({ 
+      url: session.tabs.map(tab => tab.url),
+      focused: true
+    });
+  }
 };
 
 // Save tabs to history every 5 minutes
@@ -24,8 +100,30 @@ if (!localStorage.getItem('tabFolders')) {
   localStorage.setItem('tabFolders', JSON.stringify({}));
 }
 
+// Message handling
 chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
-  if (request.type === "GET_TAB_HISTORY") {
+  if (request.type === "BOOKMARK_ALL") {
+    bookmarkAllTabs()
+      .then(() => sendResponse({ success: true }))
+      .catch(error => sendResponse({ success: false, error: error.message }));
+    return true;
+  }
+
+  else if (request.type === "SAVE_SESSION") {
+    saveSession()
+      .then(() => sendResponse({ success: true }))
+      .catch(error => sendResponse({ success: false, error: error.message }));
+    return true;
+  }
+
+  else if (request.type === "RESTORE_SESSION") {
+    restoreSession(request.timestamp)
+      .then(() => sendResponse({ success: true }))
+      .catch(error => sendResponse({ success: false, error: error.message }));
+    return true;
+  }
+
+  else if (request.type === "GET_TAB_HISTORY") {
     const history = JSON.parse(localStorage.getItem('tabHistory') || '[]');
     sendResponse(history);
     return true;
@@ -58,8 +156,8 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
   }
 
   else if (request.type === "GET_TABS") {
-    chrome.tabs.query({}, (tabs) => {
-      const tabList = tabs.map(tab => ({
+    chrome.tabs.query({}, (tabs: chrome.tabs.Tab[]) => {
+      const tabList = tabs.map((tab: chrome.tabs.Tab) => ({
         id: tab.id,
         title: tab.title,
         url: tab.url,
@@ -80,18 +178,24 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
         break;
       case "focus":
         chrome.tabs.update(tabId, { active: true });
-        chrome.windows.update(windowId, { focused: true });
+        if (windowId) {
+          chrome.windows.update(windowId, { focused: true });
+        }
         break;
       case "pin":
         chrome.tabs.get(tabId, (tab: chrome.tabs.Tab) => {
-          chrome.tabs.update(tabId, { pinned: !tab.pinned });
+          if (tab.id !== undefined) {
+            chrome.tabs.update(tab.id, { pinned: !tab.pinned });
+          }
         });
         break;
       case "moveToNewWindow":
         chrome.windows.create({ tabId });
         break;
       case "moveToWindow":
-        chrome.tabs.move(tabId, { windowId, index: -1 });
+        if (windowId) {
+          chrome.tabs.move(tabId, { windowId, index: -1 });
+        }
         break;
     }
     sendResponse({ success: true });
