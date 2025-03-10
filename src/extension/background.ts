@@ -20,7 +20,10 @@ interface SessionSnapshot {
 const saveTabsToHistory = async () => {
   const tabs = await chrome.tabs.query({});
   const timestamp = new Date().toISOString();
-  const history = JSON.parse(localStorage.getItem('tabHistory') || '[]') as SessionSnapshot[];
+  
+  // Get existing history using chrome.storage.local
+  const result = await chrome.storage.local.get('tabHistory');
+  const history = result.tabHistory || [];
   
   const tabSnapshots: TabSnapshot[] = tabs.map((tab: chrome.tabs.Tab) => ({
     id: tab.id,
@@ -35,7 +38,8 @@ const saveTabsToHistory = async () => {
     tabs: tabSnapshots
   });
 
-  localStorage.setItem('tabHistory', JSON.stringify(history.slice(-100))); // Keep last 100 snapshots
+  // Store back to chrome.storage.local
+  await chrome.storage.local.set({ 'tabHistory': history.slice(-100) }); // Keep last 100 snapshots
 };
 
 // Bookmark management
@@ -57,7 +61,10 @@ const bookmarkAllTabs = async () => {
 // Session management
 const saveSession = async () => {
   const tabs = await chrome.tabs.query({});
-  const sessions = JSON.parse(localStorage.getItem('savedSessions') || '[]') as SessionSnapshot[];
+  
+  // Get existing sessions using chrome.storage.local
+  const result = await chrome.storage.local.get('savedSessions');
+  const sessions = result.savedSessions || [];
   
   const tabSnapshots: TabSnapshot[] = tabs.map((tab: chrome.tabs.Tab) => ({
     id: tab.id,
@@ -72,11 +79,12 @@ const saveSession = async () => {
     tabs: tabSnapshots
   });
 
-  localStorage.setItem('savedSessions', JSON.stringify(sessions));
+  await chrome.storage.local.set({ 'savedSessions': sessions });
 };
 
 const restoreSession = async (timestamp?: string) => {
-  const sessions = JSON.parse(localStorage.getItem('savedSessions') || '[]') as SessionSnapshot[];
+  const result = await chrome.storage.local.get('savedSessions');
+  const sessions = result.savedSessions || [];
   if (sessions.length === 0) return;
 
   // Get the most recent session if no timestamp provided
@@ -95,10 +103,13 @@ const restoreSession = async (timestamp?: string) => {
 // Save tabs to history every 5 minutes
 setInterval(saveTabsToHistory, 5 * 60 * 1000);
 
-// Initialize folders in localStorage if not exists
-if (!localStorage.getItem('tabFolders')) {
-  localStorage.setItem('tabFolders', JSON.stringify({}));
-}
+// Initialize folders in storage if not exists
+(async () => {
+  const result = await chrome.storage.local.get('tabFolders');
+  if (!result.tabFolders) {
+    await chrome.storage.local.set({ 'tabFolders': {} });
+  }
+})();
 
 // Message handling
 chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
@@ -124,34 +135,41 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
   }
 
   else if (request.type === "GET_TAB_HISTORY") {
-    const history = JSON.parse(localStorage.getItem('tabHistory') || '[]');
-    sendResponse(history);
+    chrome.storage.local.get('tabHistory', (result) => {
+      sendResponse(result.tabHistory || []);
+    });
     return true;
   }
 
   else if (request.type === "GET_TAB_FOLDERS") {
-    const folders = JSON.parse(localStorage.getItem('tabFolders') || '{}');
-    sendResponse(folders);
+    chrome.storage.local.get('tabFolders', (result) => {
+      sendResponse(result.tabFolders || {});
+    });
     return true;
   }
 
   else if (request.type === "SAVE_TABS_TO_FOLDER") {
     const { folderName, tabs } = request;
-    const folders = JSON.parse(localStorage.getItem('tabFolders') || '{}');
-    folders[folderName] = tabs;
-    localStorage.setItem('tabFolders', JSON.stringify(folders));
-    sendResponse({ success: true });
+    chrome.storage.local.get('tabFolders', (result) => {
+      const folders = result.tabFolders || {};
+      folders[folderName] = tabs;
+      chrome.storage.local.set({ 'tabFolders': folders }, () => {
+        sendResponse({ success: true });
+      });
+    });
     return true;
   }
 
   else if (request.type === "OPEN_TABS_FROM_FOLDER") {
     const { folderName } = request;
-    const folders = JSON.parse(localStorage.getItem('tabFolders') || '{}');
-    const tabs = folders[folderName];
-    if (tabs) {
-      chrome.windows.create({ url: tabs.map(tab => tab.url) });
-    }
-    sendResponse({ success: true });
+    chrome.storage.local.get('tabFolders', (result) => {
+      const folders = result.tabFolders || {};
+      const tabs = folders[folderName];
+      if (tabs) {
+        chrome.windows.create({ url: tabs.map(tab => tab.url) });
+      }
+      sendResponse({ success: true });
+    });
     return true;
   }
 
