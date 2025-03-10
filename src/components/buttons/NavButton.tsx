@@ -32,7 +32,7 @@ const Button: React.FC<ButtonProps> = ({
     primary: `${bgColor || 'bg-blue-500'} text-white hover:bg-blue-600`,
     secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200",
     outline: "border border-gray-300 bg-transparent hover:bg-gray-100",
-    nav: `${bgColor || 'bg-blue-600'} text-white hover:bg-blue-700 cursor-pointer hover:scale-105 hover:shadow-lg`
+    nav: `${bgColor || 'bg-blue-600'} text-white hover:bg-blue-700 cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-[0_8px_16px_rgba(0,0,0,0.2)] active:scale-95 active:shadow-[0_4px_8px_rgba(0,0,0,0.1)]`
   };
 
   const sizes = {
