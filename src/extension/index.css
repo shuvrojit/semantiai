@@ -13,6 +13,7 @@ body {
     min-height: 200px;
     font-family: "Roboto", sans-serif;
     overflow-x: hidden;
+    padding: 4px;
 }
 
 #root {
