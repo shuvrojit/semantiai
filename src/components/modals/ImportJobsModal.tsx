@@ -1,3 +1,4 @@
+import { analyzeJob } from "@/api/jobs";
 import React from "react";
 
 interface ImportJobsModalProps {
@@ -12,6 +13,14 @@ const ImportJobsModal: React.FC<ImportJobsModalProps> = ({
   if (!isOpen) {
     return null;
   }
+
+  const [jobDescription, setJobDescription] = React.useState<string>("");
+
+  const handleImport = async () => {
+    console.log(jobDescription);
+    const result = await analyzeJob(jobDescription);
+    return result;
+  };
 
   return (
     <div
@@ -56,6 +65,7 @@ const ImportJobsModal: React.FC<ImportJobsModalProps> = ({
             id="jobDescription"
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-32"
             placeholder="Enter job description"
+            onChange={(e) => setJobDescription(e.target.value)}
           />
         </div>
 
@@ -63,6 +73,7 @@ const ImportJobsModal: React.FC<ImportJobsModalProps> = ({
           <button
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2"
             type="button"
+            onClick={handleImport}
           >
             Import
           </button>
