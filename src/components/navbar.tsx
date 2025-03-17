@@ -9,14 +9,15 @@ const Navbar: React.FC = () => {
   const navItems = [
     { name: "Tabs", path: "/tabs" },
     { name: "Jobs", path: "/jobs" },
+    { name: "CV", path: "/cv" },
     { name: "Scholarship", path: "/scholarships" },
     { name: "Article", path: "/cv-template" },
     { name: "Links", path: "/links" },
   ];
 
   React.useEffect(() => {
-    if (location.pathname === '/') {
-      navigate('/tabs');
+    if (location.pathname === "/") {
+      navigate("/tabs");
     }
   }, [location.pathname, navigate]);
 
@@ -30,7 +31,9 @@ const Navbar: React.FC = () => {
   return (
     <nav className="fixed left-0 top-0 h-screen w-48 bg-white shadow-lg flex flex-col py-6">
       <div className="mb-8 px-4">
-        <h1 className="text-xl font-bold text-blue-600 text-center">SemanticAI</h1>
+        <h1 className="text-xl font-bold text-blue-600 text-center">
+          SemanticAI
+        </h1>
       </div>
       <div className="flex flex-col items-center justify-start gap-4 flex-1">
         {navItems.map((item) => (
@@ -40,9 +43,9 @@ const Navbar: React.FC = () => {
             name={item.name}
             onClick={() => navigate(item.path)}
             className={`transition-all hover:scale-105 ${
-              location.pathname === item.path 
-                ? 'ring-2 ring-blue-300 bg-blue-50'
-                : 'hover:bg-gray-50'
+              location.pathname === item.path
+                ? "ring-2 ring-blue-300 bg-blue-50"
+                : "hover:bg-gray-50"
             }`}
           />
         ))}
