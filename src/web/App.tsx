@@ -5,6 +5,7 @@ import Links from "@/components/Links";
 import Jobs from "@/web/pages/Jobs";
 import Scholarships from "@/web/pages/Scholarships";
 import Tabs from "@/web/pages/Tabs";
+import CVPage from "./pages/CV";
 
 const App: React.FC = () => {
   return (
@@ -15,6 +16,7 @@ const App: React.FC = () => {
           <Routes>
             <Route path="/links" element={<Links />} />
             <Route path="/jobs" element={<Jobs />} />
+            <Route path="/jobs" element={<CVPage />} />
             <Route path="/scholarships" element={<Scholarships />} />
             <Route path="/tabs" element={<Tabs />} />
           </Routes>
