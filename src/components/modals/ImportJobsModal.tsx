@@ -1,23 +1,37 @@
-import React from 'react';
+import React from "react";
 
 interface ImportJobsModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const ImportJobsModal: React.FC<ImportJobsModalProps> = ({ isOpen, onClose }) => {
+const ImportJobsModal: React.FC<ImportJobsModalProps> = ({
+  isOpen,
+  onClose,
+}) => {
   if (!isOpen) {
     return null;
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-md w-96">
+    <div
+      className="fixed inset-0 bg-black opacity-80 flex items-center justify-center"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white p-8 rounded-lg shadow-md w-96"
+        onClick={(e) => e.stopPropagation()}
+      >
         <h2 className="text-2xl font-bold mb-4">Import Jobs</h2>
-        <p className="text-gray-700 mb-4">Import job via url or job description</p>
+        <p className="text-gray-700 mb-4">
+          Import job via url or job description
+        </p>
 
         <div className="mb-4">
-          <label htmlFor="jobUrl" className="block text-gray-700 text-sm font-bold mb-2">
+          <label
+            htmlFor="jobUrl"
+            className="block text-gray-700 text-sm font-bold mb-2"
+          >
             From URL <span className="ml-1 cursor-pointer">ⓘ</span>
           </label>
           <input
@@ -26,11 +40,16 @@ const ImportJobsModal: React.FC<ImportJobsModalProps> = ({ isOpen, onClose }) =>
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             placeholder="Enter URL"
           />
-          <button className="text-blue-500 hover:text-blue-700 mt-2 text-sm">Add More</button>
+          <button className="text-blue-500 hover:text-blue-700 mt-2 text-sm">
+            Add More
+          </button>
         </div>
 
         <div className="mb-6">
-          <label htmlFor="jobDescription" className="block text-gray-700 text-sm font-bold mb-2">
+          <label
+            htmlFor="jobDescription"
+            className="block text-gray-700 text-sm font-bold mb-2"
+          >
             From Job Description
           </label>
           <textarea
