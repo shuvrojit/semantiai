@@ -44,3 +44,10 @@ export async function fetchScholarships(filters?: {
   });
   return response.scholarships || [];
 }
+
+export async function analyzeJob(text: string): Promise<any> {
+  return makeRequest('/features/analyze-job', {
+    method: 'POST',
+    body: { text:text  }
+  });
+}
