@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { getLinks, analyzeContent, summarizeContent } from '@/api/content';
+import React, { useEffect, useState, useCallback } from 'react';
+import { getLinks, analyzeContent, summarizeContent, getAllContent } from '@/api/content';
 import { TabContent } from '@/types';
 import AnalysisModal from './modals/AnalysisModal';
 import SummaryModal from './modals/SummaryModal';
@@ -138,37 +138,67 @@ const LinkCard: React.FC<LinkCardProps> = ({ id, title, url, html }) => {
 };
 
 const Links: React.FC = () => {
-  const [links, setLinks] = useState<TabContent[]>([]);
+  const [links, setLinks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const [search, setSearch] = useState('');
+  const [sortBy, setSortBy] = useState('createdAt');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [searchFields, setSearchFields] = useState<('title' | 'text' | 'url')[]>(['title', 'url']);
+
+  const fetchContent = async () => {
+    try {
+      setLoading(true);
+      const response = await getAllContent({
+        page,
+        limit,
+        search: search || undefined,
+        sortBy,
+        sortOrder,
+        searchFields: search ? searchFields : undefined
+      });
+      
+      setLinks(response.data);
+      setTotalItems(response.meta.total);
+      setTotalPages(Math.ceil(response.meta.total / response.meta.limit));
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch content');
+      setLinks([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchLinks = async () => {
-      try {
-        const response = await getLinks();
-        console.log(response);
-        setLinks(response.links);
-        setError(null);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch links');
-        setLinks([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+    fetchContent();
+  }, [page, limit, sortBy, sortOrder]);
 
-    fetchLinks();
-  }, []);
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    setPage(1); // Reset to first page when searching
+    fetchContent();
+  };
 
-  if (loading) {
+  const handlePageChange = (newPage: number) => {
+    if (newPage > 0 && newPage <= totalPages) {
+      setPage(newPage);
+    }
+  };
+
+  if (loading && links.length === 0) {
     return (
       <div className="max-w-4xl mx-auto text-center py-12">
-        <div className="text-gray-600">Loading links...</div>
+        <div className="text-gray-600">Loading content...</div>
       </div>
     );
   }
 
-  if (error) {
+  if (error && links.length === 0) {
     return (
       <div className="max-w-4xl mx-auto text-center py-12">
         <div className="text-red-600">{error}</div>
@@ -178,14 +208,83 @@ const Links: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">Links</h1>
-      {(!links || links.length === 0) ? (
-        <div className="text-gray-600 text-center py-8">No links found</div>
+      <h1 className="text-3xl font-bold mb-6">Saved Content</h1>
+      
+      <div className="mb-6">
+        <form onSubmit={handleSearch} className="flex gap-2">
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search content..."
+            className="flex-1 px-4 py-2 border rounded-lg"
+          />
+          <button
+            type="submit"
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            Search
+          </button>
+        </form>
+        
+        <div className="mt-3 flex flex-wrap gap-3">
+          <div className="flex items-center">
+            <label className="mr-2">Sort by:</label>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="px-3 py-1 border rounded"
+            >
+              <option value="createdAt">Date</option>
+              <option value="title">Title</option>
+              <option value="url">URL</option>
+            </select>
+          </div>
+          
+          <div className="flex items-center">
+            <label className="mr-2">Order:</label>
+            <select
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value as 'asc' | 'desc')}
+              className="px-3 py-1 border rounded"
+            >
+              <option value="desc">Descending</option>
+              <option value="asc">Ascending</option>
+            </select>
+          </div>
+          
+          <div className="flex items-center">
+            <label className="mr-2">Per page:</label>
+            <select
+              value={limit}
+              onChange={(e) => {
+                setLimit(Number(e.target.value));
+                setPage(1); // Reset to first page when changing limit
+              }}
+              className="px-3 py-1 border rounded"
+            >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      
+      {loading && (
+        <div className="text-center py-4">
+          <div className="text-gray-600">Refreshing content...</div>
+        </div>
+      )}
+
+      {links.length === 0 ? (
+        <div className="text-gray-600 text-center py-8">No content found</div>
       ) : (
         <div className="space-y-4">
-          {links.map((link, index) => (
+          {links.map((link) => (
             <LinkCard 
-              key={`${link.url}-${index}`}
+              key={link._id}
               id={link._id}
               title={link.title}
               url={link.url}
@@ -194,6 +293,68 @@ const Links: React.FC = () => {
           ))}
         </div>
       )}
+      
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center my-8">
+          <nav className="flex items-center gap-1">
+            <button
+              onClick={() => handlePageChange(page - 1)}
+              disabled={page === 1}
+              className={`px-3 py-1 rounded ${
+                page === 1 
+                  ? 'bg-gray-200 text-gray-500 cursor-not-allowed' 
+                  : 'bg-gray-200 hover:bg-gray-300'
+              }`}
+            >
+              Previous
+            </button>
+            
+            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+              let pageNum;
+              if (totalPages <= 5) {
+                pageNum = i + 1;
+              } else if (page <= 3) {
+                pageNum = i + 1;
+              } else if (page >= totalPages - 2) {
+                pageNum = totalPages - 4 + i;
+              } else {
+                pageNum = page - 2 + i;
+              }
+              
+              return (
+                <button
+                  key={pageNum}
+                  onClick={() => handlePageChange(pageNum)}
+                  className={`w-8 h-8 flex items-center justify-center rounded ${
+                    page === pageNum 
+                      ? 'bg-blue-600 text-white' 
+                      : 'bg-gray-200 hover:bg-gray-300'
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              );
+            })}
+            
+            <button
+              onClick={() => handlePageChange(page + 1)}
+              disabled={page === totalPages}
+              className={`px-3 py-1 rounded ${
+                page === totalPages 
+                  ? 'bg-gray-200 text-gray-500 cursor-not-allowed' 
+                  : 'bg-gray-200 hover:bg-gray-300'
+              }`}
+            >
+              Next
+            </button>
+          </nav>
+        </div>
+      )}
+      
+      <div className="text-center text-sm text-gray-500 mb-8">
+        Showing {links.length} of {totalItems} items
+      </div>
     </div>
   );
 };
